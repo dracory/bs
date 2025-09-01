@@ -1,4 +1,4 @@
-# Bootstrap UI for Golang <a href="https://gitpod.io/#https://github.com/gouniverse/bs" target="_blank" style="float:right;"><img src="https://gitpod.io/button/open-in-gitpod.svg" alt="Open in Gitpod" loading="lazy"></a>
+# Bootstrap UI for Golang <a href="https://gitpod.io/#https://github.com/dracory/bs" target="_blank" style="float:right;"><img src="https://gitpod.io/button/open-in-gitpod.svg" alt="Open in Gitpod" loading="lazy"></a>
 
 An extensive Golang library for declaratve building of Bootstrap components. 
 

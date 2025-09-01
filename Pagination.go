@@ -4,7 +4,7 @@ import (
 	"math"
 
 	"github.com/gouniverse/hb"
-	"github.com/gouniverse/utils"
+	"github.com/spf13/cast"
 )
 
 type PaginationOptions struct {
@@ -24,11 +24,19 @@ func Pagination(options PaginationOptions) string {
 	}
 
 	liStart := hb.LI().Class("page-item").Children([]hb.TagInterface{
-		hb.Hyperlink().Class("page-link").Style("cursor:pointer;").Attr("href", options.URL+utils.ToString(previousPageNumber)).HTML("&laquo;"),
+		hb.Hyperlink().
+			Class("page-link").
+			Style("cursor:pointer;").
+			Href(options.URL + cast.ToString(previousPageNumber)).
+			HTML("&laquo;"),
 	})
 
 	liEnd := hb.LI().Class("page-item").Children([]hb.TagInterface{
-		hb.Hyperlink().Class("page-link").Style("cursor:pointer;").Attr("href", options.URL+utils.ToString(nextPageNumber)).HTML("&raquo;"),
+		hb.Hyperlink().
+			Class("page-link").
+			Style("cursor:pointer;").
+			Href(options.URL + cast.ToString(nextPageNumber)).
+			HTML("&raquo;"),
 	})
 
 	pages := []hb.TagInterface{}
@@ -44,7 +52,11 @@ func Pagination(options PaginationOptions) string {
 		}
 
 		li := hb.LI().Class("page-item" + active).Children([]hb.TagInterface{
-			hb.Hyperlink().Class("page-link").Style("cursor:pointer;").Attr("href", options.URL+utils.ToString(i)).HTML(utils.ToString(i + 1)),
+			hb.Hyperlink().
+				Class("page-link").
+				Style("cursor:pointer;").
+				Href(options.URL + cast.ToString(i)).
+				HTML(cast.ToString(i + 1)),
 		})
 
 		pages = append(pages, li)
