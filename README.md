@@ -2,7 +2,7 @@
 
 An extensive Golang library for declaratve building of Bootstrap components. 
 
-Its an extension of the HTML Builder package: https://github.com/gouniverse/hb
+Its an extension of the HTML Builder package: https://github.com/dracory/hb
 
 You can find different examples below.
 

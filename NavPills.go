@@ -1,7 +1,7 @@
 package bs
 
 import (
-	"github.com/gouniverse/hb"
+	"github.com/dracory/hb"
 )
 
 func NavPills() *hb.Tag {

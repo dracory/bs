@@ -3,7 +3,7 @@ package bs
 import (
 	"math"
 
-	"github.com/gouniverse/hb"
+	"github.com/dracory/hb"
 	"github.com/spf13/cast"
 )
 
