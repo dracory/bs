@@ -148,7 +148,8 @@ func TestPaginationLastPage(t *testing.T) {
 }
 
 func TestPaginationFirstPageStartsFromZero(t *testing.T) {
-	// Test with FirstPageStartsAt = 0 (zero-indexed pages)
+	// Test with FirstPageStartsAt = 0 (zero-indexed pages).
+	// Labels equal the page number used in the href.
 	options := PaginationOptions{
 		NumberItems:       20,
 		CurrentPageNumber: 0,
@@ -160,12 +161,15 @@ func TestPaginationFirstPageStartsFromZero(t *testing.T) {
 
 	html := Pagination(options)
 
-	// Should contain page 0 and page 1
-	if !strings.Contains(html, ">0<") {
-		t.Error("Expected page 0 to be displayed")
+	// Page 0 and page 1 links, labeled with their page number
+	if !strings.Contains(html, `href="/page/0"`) {
+		t.Error("Expected page 0 href to be displayed")
 	}
-	if !strings.Contains(html, ">1<") {
-		t.Error("Expected page 1 to be displayed")
+	if !strings.Contains(html, `href="/page/1"`) {
+		t.Error("Expected page 1 href to be displayed")
+	}
+	if !strings.Contains(html, `href="/page/0" style="cursor:pointer;">0<`) {
+		t.Error("Expected page 0 link to be labeled 0")
 	}
 }
 
@@ -266,7 +270,7 @@ func TestPaginationMinMaxCalculation(t *testing.T) {
 			pagesToShow:       5,
 			firstPageStartsAt: 1,
 			expectedMin:       1,
-			expectedMax:       6,
+			expectedMax:       5,
 			expectedPrevious:  0,
 			expectedNext:      2,
 		},
@@ -277,7 +281,7 @@ func TestPaginationMinMaxCalculation(t *testing.T) {
 			perPage:           10,
 			pagesToShow:       5,
 			firstPageStartsAt: 1,
-			expectedMin:       5,
+			expectedMin:       6,
 			expectedMax:       10,
 			expectedPrevious:  9,
 			expectedNext:      11,
@@ -290,7 +294,7 @@ func TestPaginationMinMaxCalculation(t *testing.T) {
 			pagesToShow:       4,
 			firstPageStartsAt: 0,
 			expectedMin:       0,
-			expectedMax:       4,
+			expectedMax:       3,
 			expectedPrevious:  -1,
 			expectedNext:      1,
 		},
@@ -319,6 +323,37 @@ func TestPaginationMinMaxCalculation(t *testing.T) {
 				t.Errorf("Expected next %d, got %d", tc.expectedNext, next)
 			}
 		})
+	}
+}
+
+func TestPaginationNoExtraPageZeroIndexed(t *testing.T) {
+	// Bug: with FirstPageStartsAt=0, paginationMinMaxPrevNext computes
+	// max = min + pagesToShow (capped at numberOfPages), which renders
+	// one page link beyond the last valid page. With 2 items at
+	// per_page=1 there are exactly 2 pages (0 and 1) — page "2" must
+	// not be rendered.
+	options := PaginationOptions{
+		NumberItems:       2,
+		CurrentPageNumber: 0,
+		PerPage:           1,
+		PagesToShow:       5,
+		URL:               "/page/",
+		FirstPageStartsAt: 0,
+	}
+
+	html := Pagination(options)
+
+	// Pages 0 and 1 exist.
+	if !strings.Contains(html, `href="/page/0"`) {
+		t.Error("Expected page 0 href to be displayed")
+	}
+	if !strings.Contains(html, `href="/page/1"`) {
+		t.Error("Expected page 1 href to be displayed")
+	}
+
+	// No page index 2 exists — its link must not be rendered.
+	if strings.Contains(html, `href="/page/2"`) {
+		t.Error("Did not expect page 2 href — only 2 pages exist (0 and 1)")
 	}
 }
 

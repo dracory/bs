@@ -38,7 +38,11 @@ type PaginationOptions struct {
 // will be displayed in <li> elements with the class "page-item" and the class "active"
 // if the page number matches the current page number.
 //
-// The function will return an empty string if the maximum page number is less than 2.
+// The function will return an empty string if there is only one page to display.
+//
+// The page numbers are used verbatim in both the href and the label —
+// callers that must not show 0 to the end user should use 1-based page
+// numbers and set FirstPageStartsAt to 1.
 //
 // Example:
 //
@@ -55,7 +59,7 @@ type PaginationOptions struct {
 func Pagination(options PaginationOptions) string {
 	min, max, previousPageNumber, nextPageNumber := paginationMinMaxPrevNext(options.NumberItems, options.CurrentPageNumber, options.PerPage, options.PagesToShow, options.FirstPageStartsAt)
 
-	if max < 2 {
+	if max <= options.FirstPageStartsAt {
 		return ""
 	}
 
@@ -113,7 +117,12 @@ func paginationMinMaxPrevNext(numberItems int, currentPageNumber int, perPage in
 	previousPageNumber = currentPageNumber - 1
 	nextPageNumber = currentPageNumber + 1
 
+	if perPage <= 0 {
+		perPage = 1
+	}
+
 	numberOfPages := int(math.Ceil(float64(numberItems) / float64(perPage)))
+	lastPage := firstPageStartsAt + numberOfPages - 1
 	// adjacent := int(math.Floor(((float64(currentPageNumber) - 3) / 2)))
 
 	min = currentPageNumber - pagesToShow/2
@@ -125,13 +134,13 @@ func paginationMinMaxPrevNext(numberItems int, currentPageNumber int, perPage in
 		min = firstPageStartsAt
 	}
 
-	max = min + pagesToShow
+	max = min + pagesToShow - 1
 
-	if max > numberOfPages {
-		max = numberOfPages
+	if max > lastPage {
+		max = lastPage
 
 		// too little pages, pad on the left
-		min = max - pagesToShow
+		min = max - pagesToShow + 1
 		if min < firstPageStartsAt {
 			min = firstPageStartsAt
 		}
